@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask App</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+    <h1>Stock Helper</h1>
+    <form method="POST" action="/greet">
+        <label for="name">Enter ticker:</label>
+        <input type="text" id="name" name="name">
+        <button type="submit">Submit</button>
+    </form>
+    <div class="container">
+        {% if length > 0 %}
+            <h1 class="mt-5">{{ name }}</h1>
+        {% else %}
+            <h1 class="mt-5">Ticker Not Found</h1>
+        {% endif %}
+        {% if length > 0 %}
+            <img src="{{ url_for('plot_png', open=data.open, close=data.close, high=data.high, low=data.low, date=data.date) }}" alt="Stock chart">
+        {% endif %}
+        <br>
+        <br>
+        <div>
+            {% if length > 0 %}
+                {{ table_html|safe }}
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
