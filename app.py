@@ -26,37 +26,29 @@ def greet():
         df['50d MA'] = df['Close'].rolling(window=50).mean()
         df['100d MA'] = df['Close'].rolling(window=100).mean()
 
-        open_prices = df['Open'].tolist()
-        close_prices = df['Close'].tolist()
-        high_prices = df['High'].tolist()
-        low_prices = df['Low'].tolist()
-
         df = df.sort_index(ascending=False)
-        df = df.head(20)
+        df = df.head(145)
 
         df.reset_index(inplace=True)
         df.rename(columns={'index': 'Date'}, inplace=True)
 
-        open_prices = df['Open'].tolist()
         close_prices = df['Close'].tolist()
-        high_prices = df['High'].tolist()
-        low_prices = df['Low'].tolist()
+        open_prices = df['Open'].tolist()
+        hundredMA = df['100d MA'].tolist()
+        fiftyMA = df['50d MA'].tolist()
         dates = df['Date'].dt.strftime('%m-%d-%Y').tolist()
 
         dates.reverse()
-        open_prices.reverse()
         close_prices.reverse()
-        high_prices.reverse()
-        low_prices.reverse()
-
-        print(len(dates))
-        print(dates)
+        open_prices.reverse()
+        hundredMA.reverse()
+        fiftyMA.reverse()
 
         data = {"date" : dates,
-            "open": open_prices,
             "close": close_prices,
-            "high": high_prices,
-            "low": low_prices}
+            "open": open_prices,
+            "hundredMA": hundredMA,
+            "fiftyMA": fiftyMA}
 
         df['Open'] = df['Open'].round(2).apply(lambda x: f"${x:,.2f}")
         df['High'] = df['High'].round(2).apply(lambda x: f"${x:,.2f}")
@@ -72,23 +64,24 @@ def greet():
 @app.route('/plot.png')
 def plot_png():
     # Extract data from query parameters
-    open_prices = [float(x) for x in request.args.getlist('open')]
     close_prices = [float(x) for x in request.args.getlist('close')]
-    high_prices = [float(x) for x in request.args.getlist('high')]
-    low_prices = [float(x) for x in request.args.getlist('low')]
+    open_prices = [float(x) for x in request.args.getlist('open')]
+    hundredMA = [float(x) for x in request.args.getlist('hundredMA')]
+    fiftyMA = [float(x) for x in request.args.getlist('fiftyMA')]
 
     fig, ax = plt.subplots()
     dates = request.args.getlist('date')
 
     ax.plot(dates, open_prices, label='Open')
     ax.plot(dates, close_prices, label='Close')
-    ax.plot(dates, high_prices, label='High')
-    ax.plot(dates, low_prices, label='Low')
+    ax.plot(dates, hundredMA, label='100d MA')
+    ax.plot(dates, fiftyMA, label='50d MA')
     
     ax.legend()
     ax.yaxis.set_major_formatter(FuncFormatter(dollar_formatter))
 
     plt.gca().yaxis.set_major_locator(MaxNLocator(nbins=10))
+    plt.gca().xaxis.set_major_locator(MaxNLocator(nbins=20))
     plt.xticks(rotation=90)
     plt.tight_layout()
 

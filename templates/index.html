@@ -20,7 +20,7 @@
             <h1 class="mt-5">Ticker Not Found</h1>
         {% endif %}
         {% if length > 0 %}
-            <img src="{{ url_for('plot_png', open=data.open, close=data.close, high=data.high, low=data.low, date=data.date) }}" alt="Stock chart">
+            <img src="{{ url_for('plot_png', date=data.date, close=data.close, open=data.open, hundredMA = data.hundredMA, fiftyMA = data.fiftyMA) }}" alt="Stock chart">
         {% endif %}
         <br>
         <br>
